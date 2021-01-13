@@ -1,0 +1,134 @@
+menu "MediaTek Ralink MT7621 platform"
+	depends on MACH_MT7621
+
+config SYS_SOC
+	default "mt7621"
+
+config SYS_CONFIG_NAME
+	default "mt7621"
+
+config SYS_DCACHE_SIZE
+	default 32768
+
+config SYS_DCACHE_LINE_SIZE
+	default 32
+
+config SYS_ICACHE_SIZE
+	default 32768
+
+config SYS_ICACHE_LINE_SIZE
+	default 32
+
+config SOC_MT7621
+	bool
+	select TARGET_MT7621
+	help
+	  Support MediaTek Ralink MT7621 SoC.
+
+config SYS_TEXT_BASE
+	default 0xbfc00000 if MT7621_SPI_BOOT && !(SPL || SKIP_LOWLEVEL_INIT)
+	default 0x80200000 if SPL || SKIP_LOWLEVEL_INIT
+
+config SYS_UBOOT_IMG_COMPRESS
+	bool
+	default y
+
+config SPL_FRAMEWORK
+	bool
+	default y
+
+config SPL_START_S_PATH
+	string
+	default "arch/mips/mach-mt7621"
+
+config SPL_TEXT_BASE
+	hex
+	default 0xbfc00000 if MT7621_SPI_BOOT
+	default 0x80100000 if MT7621_NAND_BOOT
+
+config SPL_MTK_IMAGE_PAD
+	bool
+	default y
+
+config SPL_MTK_IMAGE_COMBINE
+	bool
+	default y
+
+config MIPS_SPL_STANDALONE_RELOC
+	bool
+	default y
+
+config MT7621_ROM_BOOT
+	bool
+	default y if !SKIP_LOWLEVEL_INIT
+	select ROM_EXCEPTION_VECTORS
+	select MIPS_INIT_STACK_IN_SRAM
+	select MIPS_STACK_SRAM_INIT
+
+config MT7621_SPL_BOOT
+	bool
+	default y if SPL
+	select SKIP_LOWLEVEL_INIT
+
+choice
+	prompt "Board select"
+
+config BOARD_MT7621_EVB
+	bool "MT7621 EVB"
+	select SOC_MT7621
+
+config BOARD_MT7621_UBNT
+	bool "Ubiquiti MT7621"
+	select SOC_MT7621
+
+endchoice
+
+
+source "board/ralink/mt7621_evb/Kconfig"
+source "board/ubnt/Kconfig"
+
+config MT7621_SINGLE_CORE_SUPPORT
+	bool "Enable Single Core for MT7621"
+	default n
+
+choice
+	prompt "Boot media select"
+	default MT7621_SPI_BOOT
+
+config MT7621_SPI_BOOT
+	bool "Boot from SPI NOR flash"
+	select CMD_SF
+	select CMD_MTDPARTS
+
+config MT7621_NAND_BOOT
+	bool "Boot from Parallel NAND flash"
+	select SPL
+	select CRC_POSIX1003_2
+	select CMD_NAND
+	select CMD_MTDPARTS
+
+endchoice
+
+config MT7621_SPL_FLASH_SECTOR_SIZE
+	hex "Flash sector size used for offset alignment"
+	default 0x1000
+	help
+	  When SPL is searching for the second stage U-Boot image, all possible
+	  offsets will be aligned with this value.
+
+	  0x1000 for SPI NOR flashes with 4KB erase block size support
+	  0x10000 for almost all SPI NOR flashes
+	  0x20000 for NAND flashes with 128KB block size
+
+config SKIP_LOWLEVEL_INIT
+	bool "Skip CPU/DRAM initialization"
+	default n
+	default y if SPL
+	depends on MACH_MT7621
+	help
+	  This option is used only when U-Boot is loaded from a debugger, or
+	  used as a secondary stage bootloader (e.g. boot from NAND).
+
+source "arch/mips/mach-mt7621/dramc/Kconfig"
+
+endmenu

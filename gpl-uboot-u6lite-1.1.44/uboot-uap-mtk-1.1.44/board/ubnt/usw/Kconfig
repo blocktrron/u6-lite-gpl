@@ -1,0 +1,9 @@
+if BOARD_UBNT_USW
+
+config SYS_VENDOR
+	default "ubnt"
+
+config SYS_BOARD
+	default "usw"
+
+endif

@@ -1,0 +1,9 @@
+if BOARD_UBNT_UAP
+
+config SYS_VENDOR
+	default "ubnt"
+
+config SYS_BOARD
+	default "uap"
+
+endif

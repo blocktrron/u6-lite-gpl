@@ -1,0 +1,34 @@
+
+/dts-v1/;
+#include "mt7621.dtsi"
+
+/ {
+	model = "MT7621 EVB";
+	compatible = "mediatek,mt7621_evb", "mediatek,mt7621-soc";
+
+	aliases {
+		spi0 = &spi0;
+		serial0 = &uartlite0;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+};
+
+&uartlite0 {
+	status = "okay";
+};
+
+&spi0 {
+	spi-max-frequency = <25000000>;
+	status = "okay";
+
+	spi-flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "spi-flash";
+		spi-max-frequency = <25000000>;
+		reg = <0>;
+	};
+};

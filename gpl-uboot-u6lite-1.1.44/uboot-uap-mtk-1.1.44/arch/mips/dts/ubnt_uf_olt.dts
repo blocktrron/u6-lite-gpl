@@ -1,0 +1,76 @@
+
+/dts-v1/;
+#include "mt7621.dtsi"
+
+/ {
+	model = "Ubiquiti UFiber OLT";
+	compatible = "ubiquiti,ufiber-olt";
+
+	aliases {
+		serial0 = &uartlite0;
+		i2c0 = &i2c0;
+	};
+	leds: leds {
+		compatible = "gpio-leds";
+		pwr_blue  { label = "pwr:blue";  gpios = <&expander0 10 1>; };
+		pwr_white { label = "pwr:white"; gpios = <&expander0 11 0>; };
+		pon1_green {label = "pon1:green"; gpios = <&spigpio 23 0>; };
+		pon1_white {label = "pon1:white"; gpios = <&spigpio 22 0>; };
+		pon2_green {label = "pon2:green"; gpios = <&spigpio 21 0>; };
+		pon2_white {label = "pon2:white"; gpios = <&spigpio 20 0>; };
+		pon3_green {label = "pon3:green"; gpios = <&spigpio 19 0>; };
+		pon3_white {label = "pon3:white"; gpios = <&spigpio 18 0>; };
+		pon4_green {label = "pon4:green"; gpios = <&spigpio 17 0>; };
+		pon4_white {label = "pon4:white"; gpios = <&spigpio 16 0>; };
+		pon5_green {label = "pon5:green"; gpios = <&spigpio 15 0>; };
+		pon5_white {label = "pon5:white"; gpios = <&spigpio 14 0>; };
+		pon6_green {label = "pon6:green"; gpios = <&spigpio 13 0>; };
+		pon6_white {label = "pon6:white"; gpios = <&spigpio 12 0>; };
+		pon7_green {label = "pon7:green"; gpios = <&spigpio 11 0>; };
+		pon7_white {label = "pon7:white"; gpios = <&spigpio 10 0>; };
+		pon8_green {label = "pon8:green"; gpios = <&spigpio 9 0>; };
+		pon8_white {label = "pon8:white"; gpios = <&spigpio 8 0>; };
+		sfp1_green {label = "sfp1:green"; gpios = <&spigpio 7 0>; };
+		sfp1_white {label = "sfp1:white"; gpios = <&spigpio 6 0>; };
+		sfp2_green {label = "sfp2:green"; gpios = <&spigpio 5 0>; };
+		sfp2_white {label = "sfp2:white"; gpios = <&spigpio 4 0>; };
+		mgmt_green {label = "mgmt:green"; gpios = <&spigpio 3 0>; };
+		mgmt_orange {label = "mgmt:orange"; gpios = <&spigpio 2 0>; };
+	};
+};
+
+&uartlite0 {
+	status = "okay";
+};
+
+&spi0 {
+	spi-max-frequency = <25000000>;
+	status = "okay";
+
+	spi-flash@1 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "spi-flash";
+		spi-max-frequency = <25000000>;
+		reg = <1>;
+	};
+	spigpio: spigpio@0 {
+		compatible = "fairchild,74hc595";
+		reg = <0>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		registers-number = <3>;
+		spi-max-frequency = <100000>;
+	};
+};
+
+&i2c0 {
+	status = "okay";
+	clock-frequency = <150000>;
+	expander0: pca9555@25 {
+		compatible = "nxp,pca9555";
+		reg = <0x25>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+};

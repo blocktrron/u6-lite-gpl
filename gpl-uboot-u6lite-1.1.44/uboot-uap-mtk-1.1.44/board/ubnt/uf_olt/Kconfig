@@ -1,0 +1,9 @@
+if BOARD_UBNT_UF_OLT
+
+config SYS_VENDOR
+	default "ubnt"
+
+config SYS_BOARD
+	default "uf_olt"
+
+endif

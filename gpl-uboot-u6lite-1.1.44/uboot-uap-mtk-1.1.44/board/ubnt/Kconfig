@@ -1,0 +1,93 @@
+if BOARD_MT7621_UBNT
+choice
+prompt "UBNT product select"
+config BOARD_UBNT_UAP
+bool "Ubiquiti Unifi AP"
+config BOARD_UBNT_USW
+bool "Ubiquiti Unifi Switch"
+config BOARD_UBNT_UF_OLT
+bool "Ubiquiti UFiber OLT"
+endchoice
+
+source "board/ubnt/uap/Kconfig"
+source "board/ubnt/usw/Kconfig"
+source "board/ubnt/uf_olt/Kconfig"
+
+config UBNT_APP
+	bool "Enable ubntapp support"
+	default n
+choice
+	prompt "Default MTD layout"
+	default UBNT_MT7621_SPI_MTD_LAYOUT_DEFAULT if MT7621_SPI_BOOT
+	default UBNT_MT7621_NAND_MTD_LAYOUT_DEFAULT if MT7621_NAND_BOOT
+	help
+	 This MTD layout will be used for firmware/bootloader upgrade and
+	 firmware bootup.
+
+	 If Customized is selected, default mtdids and mtdparts must
+	 be set (CONFIG_MTDIDS_DEFAULT and CONFIG_MTDPARTS_DEFAULT).
+
+config UBNT_MT7621_MTD_LAYOUT_CUSTOMIZE
+	bool "Customize"
+
+config UBNT_MT7621_SPI_MTD_LAYOUT_DEFAULT
+	bool "SPI default"
+	depends on MT7621_SPI_BOOT
+
+config UBNT_MT7621_NAND_MTD_LAYOUT_DEFAULT
+	bool "NAND default"
+	depends on MT7621_NAND_BOOT
+
+endchoice
+
+config UBNT_MT7621_FIRMWARE_OFFSET_DEFAULT
+	hex "Default firmware offset"
+	depends on UBNT_MT7621_MTD_LAYOUT_CUSTOMIZE
+	default 0xbfc50000 if MT7621_SPI_BOOT
+	default 0x140000 if MT7621_NAND_BOOT
+	help
+	 Default firmware offset in flash. Used to bootup firmware.
+
+menu "UBNT application specific setting"
+	depends on UBNT_APP
+config UBNT_PART_UBOOT_KSIZE
+	int "UBoot Paritition Size"
+	default "384"
+config UBNT_PART_UBOOT_ENV_KSIZE
+	int "UBoot Environment Variable Parition Size"
+	default "64"
+config UBNT_PART_FACTORY_KSIZE
+	int "Factory Partition Size"
+	default "64"
+config UBNT_PART_EEPROM_KSIZE
+	int "EEPROM Partition Size"
+	default "64"
+config UBNT_PART_BOOTSELECT_KSIZE
+	int "Boot-select Pariation Size"
+	default "64"
+config UBNT_PART_CFG_KSIZE
+	int "CFG Pariation Size"
+	default "1024"
+config UBNT_PART_KERNEL0_KSIZE
+	int "Kernel0 Partition Size"
+	default "15552"
+config UBNT_PART_KERNEL1_KSIZE
+	int "Kernel1 Partition Size"
+	default "15552"
+config UBNT_PERSISTENT_LOG
+	bool "Support Kernel Oops Dump"
+	default n
+config SYS_MEM_TOP_HIDE
+	int "Reserved memory for Kernel Oops Dump (Kbytes)"
+	depends on UBNT_PERSISTENT_LOG
+	default "32768"
+config UBNT_SUPPORT_CSR_EFR32_BLE
+	bool "Support CSR EFR32 ble"
+	depends on BOARD_UBNT_UAP
+	default n
+config UBNT_SUPPORT_MTK_BLE
+        bool "Support Mediatek ble"
+	depends on BOARD_UBNT_UAP
+	default n
+endmenu
+endif

@@ -1,0 +1,41 @@
+if BOARD_MT7621_EVB
+
+config SYS_VENDOR
+	default "ralink"
+
+config SYS_BOARD
+	default "mt7621_evb"
+
+choice
+	prompt "Default MTD layout"
+	default MT7621_SPI_MTD_LAYOUT_DEFAULT if MT7621_SPI_BOOT
+	default MT7621_NAND_MTD_LAYOUT_DEFAULT if MT7621_NAND_BOOT
+	help
+	  This MTD layout will be used for firmware/bootloader upgrade and
+	  firmware bootup.
+
+	  If Customized is selected, default mtdids and mtdparts must
+	  be set (CONFIG_MTDIDS_DEFAULT and CONFIG_MTDPARTS_DEFAULT).
+
+config MT7621_MTD_LAYOUT_CUSTOMIZE
+	bool "Customize"
+
+config MT7621_SPI_MTD_LAYOUT_DEFAULT
+	bool "SPI default"
+	depends on MT7621_SPI_BOOT
+
+config MT7621_NAND_MTD_LAYOUT_DEFAULT
+	bool "NAND default"
+	depends on MT7621_NAND_BOOT
+
+endchoice
+
+config MT7621_FIRMWARE_OFFSET_DEFAULT
+	hex "Default firmware offset"
+	depends on MT7621_MTD_LAYOUT_CUSTOMIZE
+	default 0xbfc50000 if MT7621_SPI_BOOT
+	default 0x140000 if MT7621_NAND_BOOT
+	help
+	  Default firmware offset in flash. Used to bootup firmware.
+
+endif
